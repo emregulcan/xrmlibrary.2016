@@ -56,5 +56,34 @@ namespace XrmLibrary.EntityHelpers.Common
         Contact = 2
     }
 
+    /// <summary>
+    /// <c>List (marketing list)</c> member types
+    /// </summary>
+    public enum ListMemberTypeCode
+    {
+        /// <summary>
+        /// INTERNAL USE ONLY
+        /// </summary>
+        Undefined = 0,
+
+        /// <summary>
+        /// Account
+        /// </summary>
+        [Description("account")]
+        Account = 1,
+
+        /// <summary>
+        /// Contact
+        /// </summary>
+        [Description("contact")]
+        Contact = 2,
+
+        /// <summary>
+        /// Lead
+        /// </summary>
+        [Description("lead")]
+        Lead = 4
+    }
+
     #endregion
 }

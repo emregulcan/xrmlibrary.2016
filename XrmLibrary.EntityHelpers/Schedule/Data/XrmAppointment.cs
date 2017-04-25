@@ -103,6 +103,9 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
 
         #region | Constructors |
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XrmAppointment()
         {
             _isInit = true;
@@ -114,6 +117,13 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
 
         #region | Public Methods |
 
+        /// <summary>
+        /// Add <c>attendee</c>
+        /// </summary>
+        /// <param name="typecode"><see cref="AttendeeTypeCode"/></param>
+        /// <param name="entityTypeCode"><see cref="AttendeeEntityTypeCode"/></param>
+        /// <param name="id"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment AddAttendee(AttendeeTypeCode typecode, AttendeeEntityTypeCode entityTypeCode, Guid id)
         {
             ExceptionThrow.IfGuidEmpty(id, "id");
@@ -123,6 +133,12 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Add <c>organizer</c>
+        /// </summary>
+        /// <param name="entityTypeCode"><see cref="AttendeeEntityTypeCode"/></param>
+        /// <param name="id"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment AddOrganizer(AttendeeEntityTypeCode entityTypeCode, Guid id)
         {
             ExceptionThrow.IfGuidEmpty(id, "id");
@@ -131,6 +147,11 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Add <c>subject</c>
+        /// </summary>
+        /// <param name="subject">Subject</param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment Subject(string subject)
         {
             ExceptionThrow.IfNullOrEmpty(subject, "subject");
@@ -139,6 +160,11 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Add <c>description</c>
+        /// </summary>
+        /// <param name="description">Description</param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment Description(string description)
         {
             ExceptionThrow.IfNullOrEmpty(description, "description");
@@ -147,6 +173,11 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Add <c>location</c>
+        /// </summary>
+        /// <param name="location">Location</param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment Location(string location)
         {
             ExceptionThrow.IfNullOrEmpty(location, "location");
@@ -155,12 +186,21 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Is appointment <c>all day event</c>?
+        /// </summary>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment AllDayEvent()
         {
             _isAllDayEvent = true;
             return this;
         }
 
+        /// <summary>
+        /// Appointment <c>Start date</c>
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment ScheduledStart(DateTime date)
         {
             ExceptionThrow.IfEquals(date, "ScheduledStart", DateTime.MinValue);
@@ -169,6 +209,11 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Appointment <c>End date</c>
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment ScheduledEnd(DateTime date)
         {
             ExceptionThrow.IfEquals(date, "ScheduledEnd", DateTime.MinValue);
@@ -177,12 +222,23 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Add <c>priority</c>
+        /// </summary>
+        /// <param name="priority"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment Priority(PriorityCode priority)
         {
             _priority = (int)priority;
             return this;
         }
 
+        /// <summary>
+        /// Add <c>regarding</c>
+        /// </summary>
+        /// <param name="entityLogicalName"></param>
+        /// <param name="id"></param>
+        /// <returns><see cref="XrmAppointment"/></returns>
         public XrmAppointment Regarding(string entityLogicalName, Guid id)
         {
             ExceptionThrow.IfNullOrEmpty(entityLogicalName, "entityLogicalName");
@@ -196,6 +252,10 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             return this;
         }
 
+        /// <summary>
+        /// Convert <see cref="XrmAppointment"/> to <see cref="Entity"/>
+        /// </summary>
+        /// <returns><see cref="Entity"/></returns>
         public Entity ToEntity()
         {
             Entity result = null;

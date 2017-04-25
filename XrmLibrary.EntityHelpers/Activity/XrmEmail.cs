@@ -67,6 +67,9 @@ namespace XrmLibrary.EntityHelpers.Activity
 
         #region | Constructors |
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XrmEmail()
         {
             _isInit = true;
@@ -365,9 +368,9 @@ namespace XrmLibrary.EntityHelpers.Activity
         }
 
         /// <summary>
-        /// Convert <see cref="XrmEmail"/> to Microsoft Dymamics CRM <see cref="Entity"/> for <c>Email Activity</c>.
+        /// Convert <see cref="XrmEmail"/> to <see cref="Entity"/> for <c>Email Activity</c>.
         /// </summary>
-        /// <returns><see cref="Microsoft.Xrm.Sdk.Entity"/></returns>
+        /// <returns><see cref="Entity"/></returns>
         public Entity ToEntity()
         {
             Entity result = null;

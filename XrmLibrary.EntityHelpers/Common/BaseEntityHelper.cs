@@ -102,13 +102,8 @@ namespace XrmLibrary.EntityHelpers.Common
         {
             ExceptionThrow.IfNullOrEmpty(fetchxml, "fetchxml");
 
-            FetchXmlToQueryExpressionRequest request = new FetchXmlToQueryExpressionRequest()
-            {
-                FetchXml = fetchxml
-            };
-
-            FetchXmlToQueryExpressionResponse serviceResponse = (FetchXmlToQueryExpressionResponse)this.OrganizationService.Execute(request);
-            return this.OrganizationService.RetrieveMultiple(serviceResponse.Query);
+            FetchExpression request = new FetchExpression(fetchxml);
+            return this.OrganizationService.RetrieveMultiple(request);
         }
 
         /// <summary>

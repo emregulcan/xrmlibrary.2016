@@ -96,6 +96,7 @@
     <Compile Include="Marketing\CampaignActivityHelper.cs" />
     <Compile Include="Marketing\CampaignHelper.cs" />
     <Compile Include="Marketing\ListHelper.cs" />
+    <Compile Include="Marketing\ListMemberResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sales\InvoiceHelper.cs" />
     <Compile Include="Sales\InvoiceProductHelper.cs" />
@@ -124,12 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XrmLibrary.ExtensionMethods\XrmLibrary.ExtensionMethods.csproj">
-      <Project>{9b4e6c83-85f0-42d3-a7c7-484ca6c2dd0b}</Project>
-      <Name>XrmLibrary.ExtensionMethods</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

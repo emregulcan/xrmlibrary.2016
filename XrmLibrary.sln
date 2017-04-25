@@ -33,4 +33,18 @@ Global
 		{39E621FF-B878-4245-AD13-30148838D342} = {C51FCC52-3B99-499D-A360-FAD5FF5A688B}
 		{9B4E6C83-85F0-42D3-A7C7-484CA6C2DD0B} = {C51FCC52-3B99-499D-A360-FAD5FF5A688B}
 	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://emregulcan.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = XrmLibrary.EntityHelpers\\XrmLibrary.EntityHelpers.csproj
+		SccProjectTopLevelParentUniqueName1 = XrmLibrary.sln
+		SccProjectName1 = XrmLibrary.EntityHelpers
+		SccLocalPath1 = XrmLibrary.EntityHelpers
+		SccProjectUniqueName2 = XrmLibrary.ExtensionMethods\\XrmLibrary.ExtensionMethods.csproj
+		SccProjectTopLevelParentUniqueName2 = XrmLibrary.sln
+		SccProjectName2 = XrmLibrary.ExtensionMethods
+		SccLocalPath2 = XrmLibrary.ExtensionMethods
+	EndGlobalSection
 EndGlobal

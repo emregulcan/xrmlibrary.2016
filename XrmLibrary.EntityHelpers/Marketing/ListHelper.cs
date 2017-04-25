@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Sasha.Exceptions;
+using Sasha.ExtensionMethods;
 using XrmLibrary.EntityHelpers.Common;
 
 namespace XrmLibrary.EntityHelpers.Marketing
@@ -16,6 +19,28 @@ namespace XrmLibrary.EntityHelpers.Marketing
     /// </summary>
     public class ListHelper : BaseEntityHelper
     {
+        #region | Enums |
+
+        /// <summary>
+        /// <c>List (marketing list)</c>  type
+        /// </summary>
+        public enum ListTypeCode
+        {
+            /// <summary>
+            /// Static list
+            /// </summary>
+            [Description("static")]
+            Static = 0,
+
+            /// <summary>
+            /// Dynamic list
+            /// </summary>
+            [Description("dynamic")]
+            Dynamic = 1
+        }
+
+        #endregion
+
         #region | Constructors |
 
         /// <summary>
@@ -238,10 +263,61 @@ namespace XrmLibrary.EntityHelpers.Marketing
             return result;
         }
 
+        /// <summary>
+        /// Retrieve <c>members</c> from <c>List (marketing list)</c>.
+        /// <para>
+        /// Please note that if your <c>list</c> is <c>dynamic</c> it must has "Fullname" (for <c>Contact</c>, <c>Lead</c>) or "Name" (for <c>Account</c>) attribute in its query.
+        /// Otherwise <see cref="ListMemberItemDetail.Name"/> will be <see cref="string.Empty"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="listId">Marketing List Id</param>
+        /// <param name="itemPerPage">
+        /// Record count per page. If marketling list has more than value, method works in loop.
+        /// It's default value <c>5000</c> and recommended range is between <c>500</c> - <c>5000</c> for better performance.
+        /// </param>
+        /// <returns>
+        /// <see cref="ListMemberResult"/> for data.
+        /// </returns>
+        public ListMemberResult GetMemberList(Guid listId, int itemPerPage = 5000)
+        {
+            ExceptionThrow.IfGuidEmpty(listId, "listId");
+            ExceptionThrow.IfNegative(itemPerPage, "itemPerPage");
+            ExceptionThrow.IfEquals(itemPerPage, "itemPerPage", 0);
+
+            ListMemberResult result = new ListMemberResult();
+
+            var list = this.OrganizationService.Retrieve(this.EntityName, listId, new ColumnSet("type", "membertype", "query"));
+
+            if (list != null)
+            {
+                ListTypeCode listType = (ListTypeCode)Convert.ToInt32(list.GetAttributeValue<bool>("type"));
+                ListMemberTypeCode membertype = (ListMemberTypeCode)list.GetAttributeValue<int>("membertype");
+                string query = list.GetAttributeValue<string>("query");
+
+                switch (listType)
+                {
+                    case ListTypeCode.Static:
+                        result = PopulateStaticList(listId, membertype, itemPerPage);
+                        break;
+
+                    case ListTypeCode.Dynamic:
+                        result = PopulateDynamicList(query, membertype, itemPerPage);
+                        break;
+                }
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region | Private Methods |
 
+        /// <summary>
+        /// Change marketing list lock status (locked - unlocked).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="isLocked"></param>
         void ChangeLockStatus(Guid id, bool isLocked)
         {
             ExceptionThrow.IfGuidEmpty(id, "id");
@@ -253,6 +329,11 @@ namespace XrmLibrary.EntityHelpers.Marketing
             this.OrganizationService.Update(entity);
         }
 
+        /// <summary>
+        /// Update marketing list name (<c>listname</c> attribute).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
         void UpdateName(Guid id, string name)
         {
             ExceptionThrow.IfGuidEmpty(id, "id");
@@ -263,6 +344,121 @@ namespace XrmLibrary.EntityHelpers.Marketing
             entity["listname"] = name;
 
             this.OrganizationService.Update(entity);
+        }
+
+        /// <summary>
+        /// Retrieve member list from static marketing list.
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <param name="membertype"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        ListMemberResult PopulateStaticList(Guid listId, ListMemberTypeCode membertype, int count)
+        {
+            ListMemberResult result = new ListMemberResult();
+
+            string[] targetColums = membertype == ListMemberTypeCode.Account ? new[] { "name" } : new[] { "fullname" };
+            string nameAttribute = membertype == ListMemberTypeCode.Account ? "members.name" : "members.fullname";
+
+            QueryExpression query = new QueryExpression("listmember");
+            query.ColumnSet = new ColumnSet("entityid");
+            query.Criteria.AddCondition("listid", ConditionOperator.Equal, listId);
+
+            LinkEntity linkEntityAccount = new LinkEntity()
+            {
+                LinkFromEntityName = "listmember",
+                LinkFromAttributeName = "entityid",
+                LinkToEntityName = membertype.Description(),
+                LinkToAttributeName = string.Format("{0}id", membertype.Description()),
+                JoinOperator = JoinOperator.Inner,
+                Columns = new ColumnSet(targetColums),
+                EntityAlias = "members"
+            };
+
+            query.LinkEntities.Add(linkEntityAccount);
+
+            result = FetchData(query, membertype, nameAttribute, count, true);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Retrieve member list from dynamic marketing list.
+        /// Convert fetchxml to <see cref="QueryExpression"/>.
+        /// </summary>
+        /// <param name="fetxhxml"></param>
+        /// <param name="membertype"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        ListMemberResult PopulateDynamicList(string fetxhxml, ListMemberTypeCode membertype, int count)
+        {
+            ExceptionThrow.IfNullOrEmpty(fetxhxml, "fetxhxml");
+
+            ListMemberResult result = new ListMemberResult();
+
+            FetchXmlToQueryExpressionRequest request = new FetchXmlToQueryExpressionRequest()
+            {
+                FetchXml = fetxhxml
+            };
+
+            FetchXmlToQueryExpressionResponse serviceResponse = (FetchXmlToQueryExpressionResponse)this.OrganizationService.Execute(request);
+
+            string nameAttribute = membertype == ListMemberTypeCode.Account ? "name" : "fullname";
+
+            result = FetchData(serviceResponse.Query, membertype, nameAttribute, count, false);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="membertype"></param>
+        /// <param name="nameAttribute"></param>
+        /// <param name="count"></param>
+        /// <param name="isStatic"></param>
+        /// <returns></returns>
+        ListMemberResult FetchData(QueryExpression query, ListMemberTypeCode membertype, string nameAttribute, int count, bool isStatic)
+        {
+            ListMemberResult result = new ListMemberResult();
+
+            string name = string.Empty;
+
+            PagingInfo pageInfo = new PagingInfo();
+            pageInfo.Count = count;
+            pageInfo.PageNumber = 1;
+
+            query.PageInfo = pageInfo;
+
+            var data = this.OrganizationService.RetrieveMultiple(query);
+
+            if (data != null && !data.Entities.IsNullOrEmpty())
+            {
+                foreach (var item in data.Entities)
+                {
+                    name = isStatic ? ((AliasedValue)item[nameAttribute]).Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
+                    result.Add(membertype, new ListMemberItemDetail(item.Id, name));
+                }
+            }
+
+            while (data.MoreRecords)
+            {
+                query.PageInfo.PageNumber += 1;
+                query.PageInfo.PagingCookie = data.PagingCookie;
+                data = this.OrganizationService.RetrieveMultiple(query);
+
+                if (data != null && !data.Entities.IsNullOrEmpty())
+                {
+                    foreach (var item in data.Entities)
+                    {
+                        name = isStatic ? ((AliasedValue)item[nameAttribute]).Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
+                        result.Add(membertype, new ListMemberItemDetail(item.Id, name));
+                    }
+                }
+            }
+
+            return result;
         }
 
         #endregion
