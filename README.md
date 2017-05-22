@@ -14,6 +14,13 @@ Your comments and pull requests are very important and always welcome
 
 # Commit / Release Notes
 
+## v1.2
+- [GetSharedPrincipalsAndAccess](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Common/CommonHelper.cs#L524-L544) method added to CommonHelper.
+
+- [ReassignOwnership](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Common/CommonHelper.cs#L559-L571) method added to CommonHelper.
+
+- [Add](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Sales/InvoiceProductHelper.cs#L45-L57) method added to InvoiceProductHelper to retrieve products from Opportunity.
+
 ## v1.1
 - [GetMemberList](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Marketing/ListHelper.cs#L281-L310) method added to Marketing.ListHelper. This retrieves all members in marketing list (without regarding Static or Dynamic) and returns ListMemberResult class. 
 - [BaseEntityHelper.Get(string fetchxml)](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Common/BaseEntityHelper.cs#L101-L107) mofied to use "FetchExpression".
