@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Sasha.Exceptions;
 using XrmLibrary.EntityHelpers.Common;
@@ -28,6 +29,32 @@ namespace XrmLibrary.EntityHelpers.Sales
         #endregion
 
         #region | Public Methods |
+
+        /// <summary>
+        /// Add a <c>Invoice product</c> to <c>Invoice</c> from an <c>Opportunity</c>.
+        /// This retrieves the products from an <c>Opportunity</c> and copies them to the <c>Invoice</c>.
+        /// <para>
+        /// For more information look at https://msdn.microsoft.com/en-us/library/microsoft.crm.sdk.messages.getinvoiceproductsfromopportunityrequest(v=crm.7).aspx
+        /// </para>
+        /// </summary>
+        /// <param name="invoiceId"><c>Invoice</c> Id</param>
+        /// <param name="opportunityId"><c>Opportunity</c> Id</param>
+        /// <returns>
+        /// <see cref="GetInvoiceProductsFromOpportunityResponse"/>
+        /// </returns>
+        public GetInvoiceProductsFromOpportunityResponse Add(Guid invoiceId, Guid opportunityId)
+        {
+            ExceptionThrow.IfGuidEmpty(opportunityId, "opportunityId");
+            ExceptionThrow.IfGuidEmpty(invoiceId, "invoiceId");
+
+            GetInvoiceProductsFromOpportunityRequest request = new GetInvoiceProductsFromOpportunityRequest()
+            {
+                OpportunityId = opportunityId,
+                InvoiceId = invoiceId
+            };
+
+            return (GetInvoiceProductsFromOpportunityResponse)this.OrganizationService.Execute(request);
+        }
 
         /// <summary>
         /// Add a <c>Invoice product</c> to <c>Invoice</c> with existing <c>Product</c> with default price.

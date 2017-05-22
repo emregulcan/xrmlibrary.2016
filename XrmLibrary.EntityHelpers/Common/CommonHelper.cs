@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Sasha.Exceptions;
 using Sasha.ExtensionMethods;
+using System.Linq;
 
 namespace XrmLibrary.EntityHelpers.Common
 {
@@ -507,6 +508,66 @@ namespace XrmLibrary.EntityHelpers.Common
 
             RollupResponse serviceResponse = (RollupResponse)this.OrganizationService.Execute(request);
             return serviceResponse.EntityCollection;
+        }
+
+        /// <summary>
+        /// Retrieve all shared principal (user or team) and <c>AccessRights</c> information (such as Read, Write etc).
+        /// <para>
+        /// For more information look at https://msdn.microsoft.com/en-us/library/microsoft.crm.sdk.messages.retrievesharedprincipalsandaccessrequest.aspx
+        /// </para>
+        /// </summary>
+        /// <param name="recordId">Record Id</param>
+        /// <param name="entityLogicalName">Record's entity logical name</param>
+        /// <returns>
+        /// <seealso cref="PrincipalAccess"/> list for data
+        /// </returns>
+        public List<PrincipalAccess> GetSharedPrincipalsAndAccess(Guid recordId, string entityLogicalName)
+        {
+            ExceptionThrow.IfGuidEmpty(recordId, "recordId");
+            ExceptionThrow.IfNullOrEmpty(entityLogicalName, "entityLogicalName");
+
+            List<PrincipalAccess> result = new List<PrincipalAccess>();
+
+            RetrieveSharedPrincipalsAndAccessRequest request = new RetrieveSharedPrincipalsAndAccessRequest()
+            {
+                Target = new EntityReference(entityLogicalName, recordId)
+            };
+
+            var serviceResponse = (RetrieveSharedPrincipalsAndAccessResponse)this.OrganizationService.Execute(request);
+
+            if (serviceResponse != null && serviceResponse.PrincipalAccesses != null && serviceResponse.PrincipalAccesses.Length > 0)
+            {
+                result = serviceResponse.PrincipalAccesses.ToList();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Reassign all records that are owned by the security principal (user or team) to another security principal (user or team).
+        /// <para>
+        /// For more information look at https://msdn.microsoft.com/en-us/library/microsoft.crm.sdk.messages.reassignobjectsownerrequest(v=crm.7).aspx
+        /// </para>
+        /// </summary>
+        /// <param name="fromPrincipalType"></param>
+        /// <param name="fromPrincipalId"></param>
+        /// <param name="toPrincipalType"></param>
+        /// <param name="toPrincipalId"></param>
+        /// <returns>
+        /// <see cref="ReassignObjectsOwnerResponse"/> 
+        /// </returns>
+        public ReassignObjectsOwnerResponse ReassignOwnership(PrincipalType fromPrincipalType, Guid fromPrincipalId, PrincipalType toPrincipalType, Guid toPrincipalId)
+        {
+            ExceptionThrow.IfGuidEmpty(fromPrincipalId, "fromPrincipalId");
+            ExceptionThrow.IfGuidEmpty(toPrincipalId, "toPrincipalId");
+
+            ReassignObjectsOwnerRequest request = new ReassignObjectsOwnerRequest()
+            {
+                FromPrincipal = new EntityReference(fromPrincipalType.Description(), fromPrincipalId),
+                ToPrincipal = new EntityReference(toPrincipalType.Description(), toPrincipalId)
+            };
+
+            return (ReassignObjectsOwnerResponse)this.OrganizationService.Execute(request);
         }
 
         #endregion
