@@ -285,6 +285,7 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             result["scheduledstart"] = _start.Value;
             result["scheduledend"] = _end.Value;
             result["isalldayevent"] = _isAllDayEvent;
+            result["location"] = _location;
 
             if (!string.IsNullOrEmpty(_regardingObject.Key) && !_regardingObject.Value.IsGuidEmpty())
             {
