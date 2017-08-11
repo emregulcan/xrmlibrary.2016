@@ -14,6 +14,12 @@ Your comments and pull requests are very important and always welcome
 
 # Commit / Release Notes
 
+## v1.3
+- Strong-named (signed) assembly support added. Please read [this issue](https://github.com/emregulcan/xrmlibrary.2016/issues/3)
+- BUG-FIXING
+   - Schedule.Data.XrmAppointment
+      - "[location](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Schedule/Data/XrmAppointment.cs#L288)" attribute added to converting MS Dynamics entity
+
 ## v1.2
 - [GetSharedPrincipalsAndAccess](https://github.com/emregulcan/xrmlibrary.2016/blob/master/XrmLibrary.EntityHelpers/Common/CommonHelper.cs#L524-L544) method added to CommonHelper.
 
