@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmLibrary.EntityHelpers", "XrmLibrary.EntityHelpers\XrmLibrary.EntityHelpers.csproj", "{39E621FF-B878-4245-AD13-30148838D342}"
 EndProject
@@ -32,6 +32,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{39E621FF-B878-4245-AD13-30148838D342} = {C51FCC52-3B99-499D-A360-FAD5FF5A688B}
 		{9B4E6C83-85F0-42D3-A7C7-484CA6C2DD0B} = {C51FCC52-3B99-499D-A360-FAD5FF5A688B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1DC3E6C5-93AE-450B-92F4-B359881197E3}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 3

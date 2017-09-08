@@ -19,9 +19,9 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
         int _priority;
 
         KeyValuePair<AttendeeEntityTypeCode, Guid> _organizer;
-        List<Tuple<AttendeeTypeCode, AttendeeEntityTypeCode, Guid>> _attendeeList;
-
         KeyValuePair<string, Guid> _regardingObject;
+        List<Tuple<AttendeeTypeCode, AttendeeEntityTypeCode, Guid>> _attendeeList;
+        Dictionary<String, object> _customAttributeList;
 
         string _subject;
         string _description;
@@ -111,6 +111,7 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             _isInit = true;
             _priority = (int)PriorityCode.Normal;
             _attendeeList = new List<Tuple<AttendeeTypeCode, AttendeeEntityTypeCode, Guid>>();
+            _customAttributeList = new Dictionary<string, object>();
         }
 
         #endregion
@@ -253,6 +254,25 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
         }
 
         /// <summary>
+        /// Add additional attribute
+        /// </summary>
+        /// <param name="attributeName">Attribute name</param>
+        /// <param name="value">
+        /// Attribute value by MS CRM datatypes (<see cref="String"/>, <see cref="int"/> or <see cref="EntityReference"/>, <see cref="OptionSetValue"/>)
+        /// </param>
+        /// <returns>
+        /// <see cref="XrmAppointment"/>
+        /// </returns>
+        public XrmAppointment AddCustomAttribute(string attributeName, object value)
+        {
+            ExceptionThrow.IfNullOrEmpty(attributeName, "attributeName");
+
+            _customAttributeList.Add(attributeName, value);
+
+            return this;
+        }
+
+        /// <summary>
         /// Convert <see cref="XrmAppointment"/> to <see cref="Entity"/>
         /// </summary>
         /// <returns><see cref="Entity"/></returns>
@@ -290,6 +310,14 @@ namespace XrmLibrary.EntityHelpers.Schedule.Data
             if (!string.IsNullOrEmpty(_regardingObject.Key) && !_regardingObject.Value.IsGuidEmpty())
             {
                 result["regardingobjectid"] = new EntityReference(_regardingObject.Key, _regardingObject.Value);
+            }
+
+            if(_customAttributeList !=null && _customAttributeList.Keys.Count > 0)
+            {
+                foreach (KeyValuePair<string, object> item in _customAttributeList)
+                {
+                    result[item.Key] = item.Value;
+                }
             }
 
             return result;

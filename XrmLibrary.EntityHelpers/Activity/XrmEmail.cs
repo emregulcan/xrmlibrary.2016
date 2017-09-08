@@ -25,6 +25,7 @@ namespace XrmLibrary.EntityHelpers.Activity
         string _subject;
         string _body;
         KeyValuePair<string, Guid> _regardingObject;
+        Dictionary<String, object> _customAttributeList;
 
         #endregion
 
@@ -78,6 +79,7 @@ namespace XrmLibrary.EntityHelpers.Activity
             _to = new List<Tuple<ToEntityType, Guid, string>>();
             _cc = new List<Tuple<ToEntityType, Guid, string>>();
             _bcc = new List<Tuple<ToEntityType, Guid, string>>();
+            _customAttributeList = new Dictionary<string, object>();
         }
 
         #endregion
@@ -368,6 +370,25 @@ namespace XrmLibrary.EntityHelpers.Activity
         }
 
         /// <summary>
+        /// Add additional attribute
+        /// </summary>
+        /// <param name="attributeName">Attribute name</param>
+        /// <param name="value">
+        /// Attribute value by MS CRM datatypes (<see cref="String"/>, <see cref="int"/> or <see cref="EntityReference"/>, <see cref="OptionSetValue"/>)
+        /// </param>
+        /// <returns>
+        /// <see cref="XrmEmail"/>
+        /// </returns>
+        public XrmEmail AddCustomAttribute(string attributeName, object value)
+        {
+            ExceptionThrow.IfNullOrEmpty(attributeName, "attributeName");
+
+            _customAttributeList.Add(attributeName, value);
+
+            return this;
+        }
+
+        /// <summary>
         /// Convert <see cref="XrmEmail"/> to <see cref="Entity"/> for <c>Email Activity</c>.
         /// </summary>
         /// <returns><see cref="Entity"/></returns>
@@ -406,6 +427,14 @@ namespace XrmLibrary.EntityHelpers.Activity
             if (!string.IsNullOrEmpty(_regardingObject.Key) && !_regardingObject.Value.IsGuidEmpty())
             {
                 result["regardingobjectid"] = new EntityReference(_regardingObject.Key, _regardingObject.Value);
+            }
+
+            if (_customAttributeList != null && _customAttributeList.Keys.Count > 0)
+            {
+                foreach (KeyValuePair<string, object> item in _customAttributeList)
+                {
+                    result[item.Key] = item.Value;
+                }
             }
 
             return result;
