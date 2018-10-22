@@ -210,13 +210,12 @@ namespace XrmLibrary.EntityHelpers.Activity
             ExceptionThrow.IfNotExpectedValue(entity.LogicalName.Trim().ToLower(), "Entity.LogicalName", "email", "Entity.LogicalName must be 'email'");
 
             var sender = GetFrom(entity);
-            var toList = GetRecipientsList(entity, "to");
 
             ExceptionThrow.IfNull(sender, "email.from");
             ExceptionThrow.IfGuidEmpty(sender.Id, "email.from.id");
             ExceptionThrow.IfNullOrEmpty(sender.LogicalName, "email.from.LogicalName");
 
-            ExceptionThrow.IfNullOrEmpty(toList, "email.to");
+            ExceptionThrow.IfNullOrEmpty(((EntityCollection)entity["to"]).Entities, "email.to");
         }
 
         /// <summary>
@@ -291,9 +290,9 @@ namespace XrmLibrary.EntityHelpers.Activity
         /// <param name="entity">Email entity</param>
         /// <param name="node">"TO", "CC", "BCC"</param>
         /// <returns></returns>
-        List<EntityReference> GetRecipientsList(Entity entity, string node)
+        List<string> GetRecipientsList(Entity entity, string node)
         {
-            List<EntityReference> result = new List<EntityReference>();
+            List<string> result = new List<string>();
 
             if (entity.Contains(node) && entity[node] is EntityCollection)
             {
@@ -305,7 +304,11 @@ namespace XrmLibrary.EntityHelpers.Activity
                     {
                         if (item.Contains("partyid") && item["partyid"] is EntityReference)
                         {
-                            result.Add((EntityReference)item["partyid"]);
+                            result.Add(((EntityReference)item["partyid"]).Id.ToString());
+                        }
+                        else if (item.Contains("addressused"))
+                        {
+                            result.Add(item["addressused"].ToString());
                         }
                     }
                 }
