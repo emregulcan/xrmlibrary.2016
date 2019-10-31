@@ -437,7 +437,7 @@ namespace XrmLibrary.EntityHelpers.Marketing
             {
                 foreach (var item in data.Entities)
                 {
-                    name = isStatic ? ((AliasedValue)item[nameAttribute]).Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
+                    name = isStatic ? item.GetAttributeValue<AliasedValue>(nameAttribute)?.Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
                     result.Add(membertype, new ListMemberItemDetail(item.Id, name));
                 }
             }
@@ -452,7 +452,7 @@ namespace XrmLibrary.EntityHelpers.Marketing
                 {
                     foreach (var item in data.Entities)
                     {
-                        name = isStatic ? ((AliasedValue)item[nameAttribute]).Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
+                        name = isStatic ? item.GetAttributeValue<AliasedValue>(nameAttribute)?.Value.ToString() : item.GetAttributeValue<string>(nameAttribute);
                         result.Add(membertype, new ListMemberItemDetail(item.Id, name));
                     }
                 }
